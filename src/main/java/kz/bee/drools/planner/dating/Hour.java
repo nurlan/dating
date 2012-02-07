@@ -2,7 +2,9 @@ package kz.bee.drools.planner.dating;
 
 import java.io.Serializable;
 
-public class Hour implements Serializable {
+import org.apache.commons.lang.builder.CompareToBuilder;
+
+public class Hour implements Serializable, Comparable<Hour> {
 
 	private Long id;
 	private int value;
@@ -23,6 +25,13 @@ public class Hour implements Serializable {
 	@Override
 	public String toString() {
 		return "Hour [id=" + id + ", value=" + value + "]";
+	}
+	
+	public int compareTo(Hour other) {
+		return new CompareToBuilder()
+	        .append(value, other.value)
+	        .append(id, other.id)
+	        .toComparison();
 	}
 	
 }

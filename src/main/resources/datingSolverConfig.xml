@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <solutionClass>kz.bee.drools.planner.dating.Dating</solutionClass>
+  <planningEntityClass>kz.bee.drools.planner.dating.Meeting</planningEntityClass>
+  <scoreDrl>/datingScoreRules.drl</scoreDrl>
+  <scoreDefinition>
+    <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+  </scoreDefinition>
+  <termination>
+    <scoreAttained>0</scoreAttained>
+  </termination>
+  <localSearch>
+  <selector>
+    <selector>
+      <moveFactoryClass>kz.bee.drools.planner.dating.solver.move.factory.ManChangeMoveFactory</moveFactoryClass>
+    </selector>
+    <selector>
+      <moveFactoryClass>kz.bee.drools.planner.dating.solver.move.factory.WomanChangeMoveFactory</moveFactoryClass>
+    </selector>
+   </selector>
+    <acceptor>
+      <completeSolutionTabuSize>1500</completeSolutionTabuSize>
+    </acceptor>
+    <forager>
+<!--       <pickEarlyType>NEVER</pickEarlyType> -->
+    </forager>
+  </localSearch>
+</solver>

@@ -1,0 +1,55 @@
+package kz.bee.drools.planner.dating.solver;
+    dialect "java"
+
+import org.drools.planner.core.score.calculator.SimpleScoreCalculator;
+import org.drools.planner.core.score.constraint.UnweightedConstraintOccurrence;
+import org.drools.planner.core.score.constraint.ConstraintType;
+
+import kz.bee.drools.planner.dating.Meeting;
+
+global SimpleScoreCalculator scoreCalculator;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+// Odna para ne doljna vstretitsya 2 raza
+rule "meetingRepetition"
+    when
+        $m1 : Meeting($id : id, $m : man, $w : woman)
+        $m2 : Meeting(id != $id, man == $m, woman == $w)
+    then
+        insertLogical(new UnweightedConstraintOccurrence("meetingRepetition", $m1, $m2));
+end
+
+// 1 man ne mojet bit v 2 meeting odnovremenno
+rule "twoTablesAtTheSameTimeMan"
+    when
+        $m1 : Meeting($id : id, $m : man, $h : hour)
+        $m2 : Meeting(id != $id, man == $m, hour == $h)
+    then
+        insertLogical(new UnweightedConstraintOccurrence("twoTablesAtTheSameTimeMan", $m1, $m2));
+end
+
+// 1 woman ne mojet bit v 2 meeting odnovremenno
+rule "twoTablesAtTheSameTimeWoman"
+    when
+        $m1 : Meeting($id : id, $m : woman, $h : hour)
+        $m2 : Meeting(id != $id, woman == $m, hour == $h)
+    then
+    	insertLogical(new UnweightedConstraintOccurrence("twoTablesAtTheSameTimeWoman", $m1, $m2));
+end
+
+// ############################################################################
+// Calculate score
+// ############################################################################
+
+rule "hardConstraintsBroken"
+    when
+        $occurrenceCount : Number() from accumulate(
+            $unweightedConstraintOccurrence : UnweightedConstraintOccurrence(),
+            count($unweightedConstraintOccurrence)
+        )
+    then
+    	scoreCalculator.setScore(- $occurrenceCount.intValue());
+end

@@ -2,10 +2,6 @@ package kz.bee.drools.planner.dating;
 
 import java.io.Serializable;
 
-import kz.bee.drools.planner.dating.solution.ManStrengthWeightFactory;
-import kz.bee.drools.planner.dating.solution.MeetingDifficultyWeightFactory;
-import kz.bee.drools.planner.dating.solution.WomanStrengthWeightFactory;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -13,7 +9,7 @@ import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRangeFromSolutionProperty;
 
-@PlanningEntity(difficultyWeightFactoryClass = MeetingDifficultyWeightFactory.class)
+@PlanningEntity//(difficultyWeightFactoryClass = MeetingDifficultyWeightFactory.class)
 public class Meeting implements Serializable, Comparable<Meeting> {
 
 	private Long id;

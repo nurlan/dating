@@ -2,7 +2,9 @@ package kz.bee.drools.planner.dating;
 
 import java.io.Serializable;
 
-public class Table implements Serializable {
+import org.apache.commons.lang.builder.CompareToBuilder;
+
+public class Table implements Serializable, Comparable<Table> {
 
 	private Long id;
 	private int number;
@@ -23,5 +25,12 @@ public class Table implements Serializable {
 	@Override
 	public String toString() {
 		return "Table [id=" + id + ", number=" + number + "]";
+	}
+	
+	public int compareTo(Table other) {
+		return new CompareToBuilder()
+	        .append(number, other.number)
+	        .append(id, other.id)
+	        .toComparison();
 	}
 }
