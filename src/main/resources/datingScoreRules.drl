@@ -135,10 +135,14 @@ end
 rule "softConstraintsBroken"
         salience -1 // Do the other rules first (optional, for performance)
     when
-        $softTotal : Number() from accumulate(
-            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT, $weight : weight),
-            sum($weight)
+        $negativeSoftTotal : Number() from accumulate(
+            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT, $weightn : weight),
+            sum($weightn)
+        )
+        $positiveSoftTotal : Number() from accumulate(
+            IntConstraintOccurrence(constraintType == ConstraintType.POSITIVE, $weightp : weight),
+            sum($weightp)
         )
     then
-        scoreCalculator.setSoftConstraintsBroken($softTotal.intValue());
+        scoreCalculator.setSoftConstraintsBroken($negativeSoftTotal.intValue()-$positiveSoftTotal.intValue());
 end
