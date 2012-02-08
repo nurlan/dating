@@ -14,6 +14,11 @@ import org.drools.WorkingMemory;
 import org.drools.planner.core.localsearch.decider.acceptor.tabu.TabuPropertyEnabled;
 import org.drools.planner.core.move.Move;
 
+/**
+ * 
+ * @author 		Nurlan Rakhimzhanov
+ * @description Represents a change of 1 or more planning variables of 1 or more planning entities in the solution.
+ */
 public class ManChangeMove implements Move, TabuPropertyEnabled {
 
 	private Meeting meeting;
@@ -24,18 +29,38 @@ public class ManChangeMove implements Move, TabuPropertyEnabled {
 		this.toMan = toMan;
 	}
 
+	/*
+	 * The returned Collection should a stable order. For example: use List or LinkedHashSet, but not HashSet. Duplicates entries in the returned Collection are best avoided.
+	 * 
+	 * @see org.drools.planner.core.localsearch.decider.acceptor.tabu.TabuPropertyEnabled#getTabuProperties()
+	 */
 	public Collection<? extends Object> getTabuProperties() {
 		return Collections.singletonList(meeting);
 	}
 
+	/*
+	 * Called before a move is evaluated to decide whether the move can be done and evaluated.
+	 * 
+	 * @see org.drools.planner.core.move.Move#isMoveDoable(org.drools.WorkingMemory)
+	 */
 	public boolean isMoveDoable(WorkingMemory workingMemory) {
 		return !ObjectUtils.equals(meeting.getMan(), toMan);
 	}
 
+	/*
+	 * Called before the move is done, so the move can be evaluated and then be undone without resulting into a permanent change in the solution.
+	 * 
+	 * @see org.drools.planner.core.move.Move#createUndoMove(org.drools.WorkingMemory)
+	 */
 	public Move createUndoMove(WorkingMemory workingMemory) {
 		return new ManChangeMove(meeting, meeting.getMan());
 	}
 
+	/*
+	 * Does the Move and updates the Solution and its WorkingMemory accordingly.
+	 * 
+	 * @see org.drools.planner.core.move.Move#doMove(org.drools.WorkingMemory)
+	 */
 	public void doMove(WorkingMemory workingMemory) {
 		FactHandle meetingHandle = workingMemory.getFactHandle(meeting);
         meeting.setMan(toMan);

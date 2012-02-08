@@ -24,10 +24,20 @@ public class Dating implements Solution<HardAndSoftScore> {
 	
 	private HardAndSoftScore score;
 	
+	/*
+	 * Returns the Score of this Solution.
+	 * 
+	 * @see org.drools.planner.core.solution.Solution#getScore()
+	 */
 	public HardAndSoftScore getScore() {
 		return this.score;
 	}
 
+	/*
+	 * Called by the Solver when the Score of this Solution has been calculated.
+	 * 
+	 * @see org.drools.planner.core.solution.Solution#setScore(org.drools.planner.core.score.Score)
+	 */
 	public void setScore(HardAndSoftScore score) {
 		this.score = score;
 	}
@@ -89,6 +99,11 @@ public class Dating implements Solution<HardAndSoftScore> {
 		this.meetingList = meetingList;
 	}
 
+	/*
+	 * Called by the Solver when the Solution needs to be inserted into an empty WorkingMemory.
+	 * 
+	 * @see org.drools.planner.core.solution.Solution#getProblemFacts()
+	 */
 	public Collection<? extends Object> getProblemFacts() {
 		List<Object> facts = new ArrayList<Object>();
 		facts.add(tableList);
@@ -98,6 +113,12 @@ public class Dating implements Solution<HardAndSoftScore> {
 		
 		return facts;
 	}
+	
+	/*
+	 * Called by the Solver when the solution needs to be cloned, for example to store a clone of the current solution as the best solution.
+	 * 
+	 * @see org.drools.planner.core.solution.Solution#cloneSolution()
+	 */
 	public Solution<HardAndSoftScore> cloneSolution() {
 		Dating clone = new Dating();
         clone.id = id;
