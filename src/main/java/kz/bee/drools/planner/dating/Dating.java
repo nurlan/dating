@@ -6,11 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.drools.planner.api.domain.solution.PlanningEntityCollectionProperty;
-//import org.drools.planner.core.score.HardAndSoftScore;
-import org.drools.planner.core.score.SimpleScore;
+import org.drools.planner.core.score.HardAndSoftScore;
 import org.drools.planner.core.solution.Solution;
 
-public class Dating implements Solution<SimpleScore> {
+public class Dating implements Solution<HardAndSoftScore> {
 
 	private Long id;
 	private int n;
@@ -23,14 +22,13 @@ public class Dating implements Solution<SimpleScore> {
 	
 	private List<Meeting> meetingList;
 	
-	//private HardAndSoftScore score;
-	private SimpleScore score;
+	private HardAndSoftScore score;
 	
-	public SimpleScore getScore() {
+	public HardAndSoftScore getScore() {
 		return this.score;
 	}
 
-	public void setScore(SimpleScore score) {
+	public void setScore(HardAndSoftScore score) {
 		this.score = score;
 	}
 	
@@ -100,8 +98,7 @@ public class Dating implements Solution<SimpleScore> {
 		
 		return facts;
 	}
-//	public Solution<HardAndSoftScore> cloneSolution() {
-	public Solution<SimpleScore> cloneSolution() {
+	public Solution<HardAndSoftScore> cloneSolution() {
 		Dating clone = new Dating();
         clone.id = id;
         clone.tableList = tableList;

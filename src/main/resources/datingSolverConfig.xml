@@ -4,10 +4,10 @@
   <planningEntityClass>kz.bee.drools.planner.dating.Meeting</planningEntityClass>
   <scoreDrl>/datingScoreRules.drl</scoreDrl>
   <scoreDefinition>
-    <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+    <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
   </scoreDefinition>
   <termination>
-    <scoreAttained>0</scoreAttained>
+    <scoreAttained>0hard/-10soft</scoreAttained>
   </termination>
   <localSearch>
   <selector>

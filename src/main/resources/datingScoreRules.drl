@@ -1,55 +1,116 @@
 package kz.bee.drools.planner.dating.solver;
     dialect "java"
 
-import org.drools.planner.core.score.calculator.SimpleScoreCalculator;
-import org.drools.planner.core.score.constraint.UnweightedConstraintOccurrence;
+import org.drools.planner.core.score.calculator.HardAndSoftConstraintScoreCalculator;
+import org.drools.planner.core.score.constraint.IntConstraintOccurrence;
 import org.drools.planner.core.score.constraint.ConstraintType;
 
 import kz.bee.drools.planner.dating.Meeting;
 
-global SimpleScoreCalculator scoreCalculator;
+global HardAndSoftConstraintScoreCalculator scoreCalculator;
 
 // ############################################################################
 // Hard constraints
 // ############################################################################
 
-// Odna para ne doljna vstretitsya 2 raza
+// ############################################################################
+// 1 pair must not meet more than 1 times
+// ############################################################################
 rule "meetingRepetition"
     when
         $m1 : Meeting($id : id, $m : man, $w : woman)
         $m2 : Meeting(id != $id, man == $m, woman == $w)
     then
-        insertLogical(new UnweightedConstraintOccurrence("meetingRepetition", $m1, $m2));
+        insertLogical(new IntConstraintOccurrence("meetingRepetition",
+                ConstraintType.NEGATIVE_HARD, 1,
+                $m1, $m2));
 end
 
-// 1 man ne mojet bit v 2 meeting odnovremenno
+// ############################################################################
+// 1 man can not be in 2 meeting at the same time
+// ############################################################################
 rule "twoTablesAtTheSameTimeMan"
     when
         $m1 : Meeting($id : id, $m : man, $h : hour)
         $m2 : Meeting(id != $id, man == $m, hour == $h)
     then
-        insertLogical(new UnweightedConstraintOccurrence("twoTablesAtTheSameTimeMan", $m1, $m2));
+        insertLogical(new IntConstraintOccurrence("twoTablesAtTheSameTimeMan",
+                ConstraintType.NEGATIVE_HARD, 1,
+                $m1, $m2));
 end
 
-// 1 woman ne mojet bit v 2 meeting odnovremenno
+// ############################################################################
+// 1 woman can not be in 2 meeting at the same time
+// ############################################################################
 rule "twoTablesAtTheSameTimeWoman"
     when
         $m1 : Meeting($id : id, $m : woman, $h : hour)
         $m2 : Meeting(id != $id, woman == $m, hour == $h)
     then
-    	insertLogical(new UnweightedConstraintOccurrence("twoTablesAtTheSameTimeWoman", $m1, $m2));
+    	insertLogical(new IntConstraintOccurrence("twoTablesAtTheSameTimeWoman",
+                ConstraintType.NEGATIVE_HARD, 1,
+                $m1, $m2));
 end
+
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+// ############################################################################
+// Maximum fairness for men
+// ############################################################################
+rule "fairnessForMen"
+    when
+    	$m1 : Meeting($id : id, $man : man)
+        $m2 : Meeting(id != $id, man == $man)
+        
+    then
+        insertLogical(new IntConstraintOccurrence("fairnessForMen", ConstraintType.NEGATIVE_SOFT,
+                1,
+                $m1, $m2));
+end
+
+
+// ############################################################################
+// Maximum fairness for women
+// ############################################################################
+rule "fairnessForWomen"
+    when
+    	$m1 : Meeting($id : id, $woman : woman)
+        $m2 : Meeting(id != $id, woman == $woman)
+        
+    then
+        insertLogical(new IntConstraintOccurrence("fairnessForWomen", ConstraintType.NEGATIVE_SOFT,
+                1,
+                $m1, $m2));
+end
+
 
 // ############################################################################
 // Calculate score
 // ############################################################################
 
+// Accumulate hard constraints
 rule "hardConstraintsBroken"
+        salience -1 // Do the other rules first (optional, for performance)
     when
-        $occurrenceCount : Number() from accumulate(
-            $unweightedConstraintOccurrence : UnweightedConstraintOccurrence(),
-            count($unweightedConstraintOccurrence)
+        $hardTotal : Number() from accumulate(
+            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD, $weight : weight),
+            sum($weight)
         )
     then
-    	scoreCalculator.setScore(- $occurrenceCount.intValue());
+        scoreCalculator.setHardConstraintsBroken($hardTotal.intValue());
+end
+
+// Accumulate soft constraints
+rule "softConstraintsBroken"
+        salience -1 // Do the other rules first (optional, for performance)
+    when
+        $softTotal : Number() from accumulate(
+            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT, $weight : weight),
+            sum($weight)
+        )
+    then
+        scoreCalculator.setSoftConstraintsBroken($softTotal.intValue());
 end

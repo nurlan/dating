@@ -9,9 +9,6 @@ import org.drools.planner.core.Solver;
 import org.drools.planner.core.event.BestSolutionChangedEvent;
 import org.drools.planner.core.event.SolverEventListener;
 import org.drools.planner.core.solution.Solution;
-import org.drools.planner.core.solver.DefaultSolverScope;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Nurlan Rakhimzhanov
@@ -141,7 +138,7 @@ public class DatingMain {
         	System.out.printf("# %3s ",m.getId());
         	System.out.println(" t:" + m.getTable().getNumber() + " h:"+ m.getHour().getValue() + " m:"+m.getMan() + " w:" + m.getWoman());
         }
-        System.out.println("Score: " + dating.getScore().getScore() + " time: " + solver.getTimeMillisSpend() );
+        System.out.println("Score (h/s): " + dating.getScore().getHardScore() + "/" + dating.getScore().getSoftScore() + " time: " + solver.getTimeMillisSpend() );
         
         System.out.println("===============================");
 	}

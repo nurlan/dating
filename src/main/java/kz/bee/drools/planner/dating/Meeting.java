@@ -9,7 +9,7 @@ import org.drools.planner.api.domain.entity.PlanningEntity;
 import org.drools.planner.api.domain.variable.PlanningVariable;
 import org.drools.planner.api.domain.variable.ValueRangeFromSolutionProperty;
 
-@PlanningEntity//(difficultyWeightFactoryClass = MeetingDifficultyWeightFactory.class)
+@PlanningEntity
 public class Meeting implements Serializable, Comparable<Meeting> {
 
 	private Long id;
@@ -44,7 +44,7 @@ public class Meeting implements Serializable, Comparable<Meeting> {
 	}
 	
 	
-	@PlanningVariable//(strengthWeightFactoryClass=ManStrengthWeightFactory.class)
+	@PlanningVariable
 	@ValueRangeFromSolutionProperty(propertyName="manList")
 	public Man getMan() {
 		return man;
@@ -54,7 +54,7 @@ public class Meeting implements Serializable, Comparable<Meeting> {
 	}
 	
 	
-	@PlanningVariable//(strengthWeightFactoryClass=WomanStrengthWeightFactory.class)
+	@PlanningVariable
 	@ValueRangeFromSolutionProperty(propertyName="womanList")
 	public Woman getWoman() {
 		return woman;
