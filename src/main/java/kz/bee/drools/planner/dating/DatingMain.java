@@ -17,11 +17,11 @@ import org.drools.planner.core.solution.Solution;
 
 public class DatingMain {
 
-	private static final int PERSON_PER_GENDER = 10;
+	public static final int PERSON_PER_GENDER = 10;
 
-	private static final int HOUR_COUNT = 5;
+	public static final int HOUR_COUNT = 5;
 
-	private static final int TABLE_COUNT = 5;
+	public static final int TABLE_COUNT = 5;
 
 	public static final String SOLVER_CONFIG
     	= "/datingSolverConfig.xml";
@@ -96,6 +96,16 @@ public class DatingMain {
 			Man m = new Man();
 			m.setId(Long.parseLong(""+j));
 			m.setName("Mr. #"+(j+1));
+			//m.setSuggestionList(new ArrayList<Long>());
+			if( j == 0 ) {
+				m.setSuggestionList(new ArrayList<Long>());
+				m.getSuggestionList().add(7L);
+			}
+			else if( j == 1 ) {
+				m.setSuggestionList(new ArrayList<Long>());
+				m.getSuggestionList().add(4L);
+				m.getSuggestionList().add(8L);
+			}
 			
 			Woman w = new Woman();
 			w.setId(Long.parseLong(""+j));
@@ -111,8 +121,8 @@ public class DatingMain {
 				m.setId(Long.parseLong(""+(j*hourList.size() + i)));
 				m.setTable(tableList.get(i));
 				m.setHour(hourList.get(j));
-				m.setMan(manList.get(1));
-				m.setWoman(womanList.get(1));
+				m.setMan(manList.get(i));
+				m.setWoman(womanList.get((i+j) % 10));
 				
 				meetingList.add(m);
 			}
@@ -120,7 +130,6 @@ public class DatingMain {
 		
 		Dating dating = new Dating();
 		dating.setId(Long.parseLong("1"));
-		dating.setN(25);
 		dating.setTableList(tableList);
 		dating.setHourList(hourList);
 		dating.setManList(manList);

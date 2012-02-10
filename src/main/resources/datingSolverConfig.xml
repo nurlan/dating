@@ -8,7 +8,7 @@
 	</scoreDefinition>
 	<termination>
 		<terminationCompositionStyle>OR</terminationCompositionStyle>
-		<scoreAttained>0hard/-10soft</scoreAttained>
+		<scoreAttained>0hard/1000soft</scoreAttained>
 		<maximumSecondsSpend>30</maximumSecondsSpend>
 	</termination>
 	<localSearch>

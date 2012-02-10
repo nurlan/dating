@@ -12,7 +12,6 @@ import org.drools.planner.core.solution.Solution;
 public class Dating implements Solution<HardAndSoftScore> {
 
 	private Long id;
-	private int n;
 	
 	private List<Table> tableList;
 	private List<Hour> hourList;
@@ -48,14 +47,6 @@ public class Dating implements Solution<HardAndSoftScore> {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public int getN() {
-		return n;
-	}
-
-	public void setN(int n) {
-		this.n = n;
 	}
 
 	public List<Table> getTableList() {

@@ -1,13 +1,20 @@
 package kz.bee.drools.planner.dating.solver;
     dialect "java"
 
+import java.util.ArrayList;
+
+import kz.bee.drools.planner.dating.DatingMain;
+import kz.bee.drools.planner.dating.Man;
+import kz.bee.drools.planner.dating.Meeting;
+import kz.bee.drools.planner.dating.Woman;
+import kz.bee.drools.planner.dating.solver.Helper;
+
 import org.drools.planner.core.score.calculator.HardAndSoftConstraintScoreCalculator;
 import org.drools.planner.core.score.constraint.IntConstraintOccurrence;
 import org.drools.planner.core.score.constraint.ConstraintType;
 
-import kz.bee.drools.planner.dating.Meeting;
-
 global HardAndSoftConstraintScoreCalculator scoreCalculator;
+global Helper removeHelper;
 
 // ############################################################################
 // Hard constraints
@@ -22,7 +29,7 @@ rule "meetingRepetition"
         $m2 : Meeting(id != $id, man == $m, woman == $w)
     then
         insertLogical(new IntConstraintOccurrence("meetingRepetition",
-                ConstraintType.NEGATIVE_HARD, 1,
+                ConstraintType.NEGATIVE_HARD, 5,
                 $m1, $m2));
 end
 
@@ -35,7 +42,7 @@ rule "twoTablesAtTheSameTimeMan"
         $m2 : Meeting(id != $id, man == $m, hour == $h)
     then
         insertLogical(new IntConstraintOccurrence("twoTablesAtTheSameTimeMan",
-                ConstraintType.NEGATIVE_HARD, 1,
+                ConstraintType.NEGATIVE_HARD, 10,
                 $m1, $m2));
 end
 
@@ -48,7 +55,7 @@ rule "twoTablesAtTheSameTimeWoman"
         $m2 : Meeting(id != $id, woman == $m, hour == $h)
     then
     	insertLogical(new IntConstraintOccurrence("twoTablesAtTheSameTimeWoman",
-                ConstraintType.NEGATIVE_HARD, 1,
+                ConstraintType.NEGATIVE_HARD, 10,
                 $m1, $m2));
 end
 
@@ -57,33 +64,47 @@ end
 // Soft constraints
 // ############################################################################
 
-// ############################################################################
+// 
 // Maximum fairness for men
-// ############################################################################
+// 
 rule "fairnessForMen"
     when
     	$m1 : Meeting($id : id, $man : man)
         $m2 : Meeting(id != $id, man == $man)
-        
     then
-        insertLogical(new IntConstraintOccurrence("fairnessForMen", ConstraintType.NEGATIVE_SOFT,
-                3,
-                $m1, $m2));
+		insertLogical(new IntConstraintOccurrence("fairnessForMen", ConstraintType.NEGATIVE_SOFT,
+                (DatingMain.TABLE_COUNT*DatingMain.HOUR_COUNT<(DatingMain.PERSON_PER_GENDER*DatingMain.PERSON_PER_GENDER))?3:0,
+                $m1,$m2));
 end
 
 
-// ############################################################################
+// 
 // Maximum fairness for women
-// ############################################################################
+// 
 rule "fairnessForWomen"
     when
     	$m1 : Meeting($id : id, $woman : woman)
         $m2 : Meeting(id != $id, woman == $woman)
-        
     then
         insertLogical(new IntConstraintOccurrence("fairnessForWomen", ConstraintType.NEGATIVE_SOFT,
-                3,
-                $m1, $m2));
+                (DatingMain.TABLE_COUNT*DatingMain.HOUR_COUNT<(DatingMain.PERSON_PER_GENDER*DatingMain.PERSON_PER_GENDER))?3:0,
+                $m1,$m2));
+end
+
+
+//
+// Men suggestion should be satisfied 
+//
+rule "menSuggestion"
+	when
+		$m1 : Meeting($id : id, $man : man, $woman : woman)
+		$m2 : Meeting(man == $man, man.suggestionList != null, man.suggestionList not contains $woman.id )
+		
+		//not Meeting(id != $id, man == $man, man.suggestionList contains $woman.id )
+	then
+		insertLogical(new IntConstraintOccurrence("menSuggestion",
+				ConstraintType.NEGATIVE_SOFT, 1,
+				$m1));
 end
 
 
@@ -144,5 +165,5 @@ rule "softConstraintsBroken"
             sum($weightp)
         )
     then
-        scoreCalculator.setSoftConstraintsBroken($negativeSoftTotal.intValue()-$positiveSoftTotal.intValue());
+        scoreCalculator.setSoftConstraintsBroken(-(-$negativeSoftTotal.intValue()+$positiveSoftTotal.intValue()));
 end
